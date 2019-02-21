@@ -1,0 +1,146 @@
+Basic rule:
+ah - function
+bh - subfunction
+call interruption - int 0xfe
+The remaining registers are used to pass arguments.
+Program load in LOAD_PROG_ORG(0x7c00 - 4000)
+
+=======Function 0=======[
+-----subfunction 0-----
+PRINTZ
+ - print ascii string(last byte 0)
+----
+IN:
+SI - OFFS MESSAGE LOST BYTE 0
+OUT:
+NONE
+
+-----subfunction 1-----
+PRINT
+- print string
+----
+IN:
+SI - OFFS MESSAGE LOST BYTE 0
+CX - STRING SIZE
+OUT:
+NONE
+----
+========================]
+
+=======Function 1=======[
+INPUT
+ - read string
+----
+IN:
+DI - OFFS BUFF FOR STRING
+CX - SIZE LIMIT
+OUT:
+DI - STRING
+----
+========================]
+
+=======Function 2=======[
+-----subfunction 0-----
+LOAD_SECTOR
+ - load sectors in mem
+----
+IN:
+AL - NUM SECTOR
+DI - OFFS BUFF/MEM
+BL - COUNT SECTOR
+OUT:
+BUFF - DATA FROM SECTOR
+AL - IF 0 ALL GOOD/0xEE ALL BAD :(
+----
+
+-----subfunction 1-----
+WRITE_SECTOR
+ - write sectors from mem
+----
+IN:
+AL - NUM SECTOR
+DI - OFFS DATA
+BL - COUNT SECTOR
+OUT:
+AL - IF 0 ALL GOOD/IF 0xEE ALL BAD
+----
+========================]
+
+=======Function 3=======[
+-----subfunction 0-----
+LOAD_FILE
+ - load file in mem
+----
+IN:
+SI - OFFS FILE NAME
+DI - OFF MEM FOR ALL FILES
+OUT:
+SI - OFFS FILE NAME
+DI - OFFS START DATA IN MEM
+CX - FILE SIZE
+AL - TYPE 0/0xFF or 0xEE if file not found
+----
+
+-----subfunction 1-----
+CREATE FILE
+ - write file from mem in disk
+-------
+IN:
+AL - TYPE (0/0XFF - SIMPLE FILE/ PROGRAM)	
+CX - SIZE FILE
+SI - OFFS NAME(10 BYTES)
+DI - OFFS START DATA
+OUT:
+AL - IF 0 ALL GOOD/IF 0xEE ALL BAD
+;------
+
+-----subfunction 2-----
+REMOVE FILE
+ - remove file from disk
+-------
+IN:
+SI - OFFS NAME
+OUT:
+AL - IF 0 ALL GOOD/IF 0xEE ALL BAD
+;------
+========================]
+
+=======Function 4=======[
+-----subfunction 0-----
+GET ARG
+----
+IN:
+BL - NUMBER
+OUT:
+SI - OFFS
+
+-----subfunction 1-----
+GET ARG COUNT
+----
+IN:
+NONE
+OUT:
+CX - COUNT
+========================]
+
+=======Function 5=======[
+-----subfunction 0-----
+BYTE TO NUMBER HEX
+- translate byte to number
+----
+IN:
+AL - BYTE
+DI - BUFF FOR STRING(2 Bytes)
+OUT:
+BUFF - NUMBER
+
+-----subfunction 1-----
+NUMBER_TO_BYTE
+- translate number to byte
+----
+IN:
+SI - NUMBER(2 Bytes);EXAMPLE: DB "5A"
+OUT:
+AL - BYTE
+;------------ 
+========================]

@@ -1,0 +1,37 @@
+The structure of the file system KonsOS FS
+In the boot sector there is a structure that contains the information necessary for the file system.
+At the end of the file storage area, there must be a magic number (8 bytes 0xff), which is needed for the file loader
+
+File structure
+The first 10 bytes of the structure contain the file name, if the file name is less than 10 bytes, then you need to add it with spaces (0x20).
+Then there are 2 bytes that store the file size in bytes
+And the last byte that stores the file type:
+0x0  - is just a file
+0xff - executable file
+After the structure goes the contents of the file
+
+Examples:
+
+A simple file
+
+db "file.txt", 0x20,0x20; filename
+dw ef - sf; size
+db 0; type
+sf:
+db "Hello, I'am simple file!"
+ef:
+
+Performing
+
+db "clear"
+db 5 dup (0x20)
+dw end_clear - start_clear
+db 0xff
+
+start_clear:
+mov ah, 0x0f
+int 0x10
+xor ah, ah
+int 0x10
+ret
+end_clear:
